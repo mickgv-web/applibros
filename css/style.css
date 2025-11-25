@@ -389,6 +389,10 @@ footer a:hover {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.formulario-login form {
+    margin-bottom: 20px;
+}
+
 .formulario-login h2 {
     margin-bottom: 15px;
     text-align: center;
