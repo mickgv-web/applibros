@@ -46,7 +46,7 @@ ob_start(); ?>
         <?php endif; ?>
 
         <!-- Botón de acceso al registro -->
-        <div class="acciones" style="margin-top:15px;">
+        <div class="acciones">
             <a href="register.php" class="btn-secondary">¿No tienes cuenta? Regístrate aquí</a>
         </div>
     </div>

@@ -69,8 +69,8 @@ ob_start(); ?>
     </form>
 
     <!-- Botón para volver al dashboard -->
-    <div class="acciones" style="margin-top:15px;">
-        <a href="dashboard.php" class="btn-secondary">Volver al Dashboard</a>
+    <div class="acciones">
+        <a href="dashboard.php" class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> Volver al Dashboard</a>
     </div>
 </div>
 <?php
