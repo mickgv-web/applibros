@@ -32,8 +32,8 @@ if (session_status() === PHP_SESSION_NONE) {
                 </div>
             </div>
         <?php else: ?>
-            <a href="login.php" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
-            <a href="register.php" class="btn-register"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+            <a href="login.php" class="btn btn--primary"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
+            <a href="register.php" class="btn btn--accent"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
         <?php endif; ?>
     </div>
 </header>

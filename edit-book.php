@@ -1,6 +1,6 @@
 <?php
 require_once 'includes/require_login.php';
-require_once 'includes/db_connect.php'; // conexión a la BD
+require_once 'includes/db_connect.php';
 
 $userId = $_SESSION['usuario_id'];
 
