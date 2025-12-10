@@ -45,16 +45,6 @@ ob_start(); ?>
             <?php endif; ?>
         </div>
     </section>
-
-    <!-- Botones de exportar/importar -->
-    <section class="data-actions">
-        <form action="export.php" method="post">
-            <button type="submit" class="btn-secondary">Exportar a JSON</button>
-        </form>
-        <form action="import.php" method="post">
-            <button type="submit" class="btn-register">Importar desde JSON</button>
-        </form>
-    </section>
 <?php
 $content = ob_get_clean();
 
