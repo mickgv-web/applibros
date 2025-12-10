@@ -1,24 +1,22 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once 'includes/require_login.php';
+require_once 'includes/db_connect.php';
 
-if (!isset($_SESSION['libros'])) {
-    $_SESSION['libros'] = [];
-}
+$userId = $_SESSION['usuario_id'];
+$user   = $_SESSION['login'];
 
-$user = $_SESSION['login'];
-
-// Inicializar array de libros del usuario si no existe
-if (!isset($_SESSION['libros'][$user])) {
-    $_SESSION['libros'][$user] = [];
-}
-
-// Borrar libro por índice
+// Borrar libro por ID
 if (isset($_GET['delete'])) {
-    $index = (int)$_GET['delete'];
-    if (isset($_SESSION['libros'][$user][$index])) {
-        unset($_SESSION['libros'][$user][$index]);
-        $_SESSION['libros'][$user] = array_values($_SESSION['libros'][$user]);
-        // Redirigir con estado "deleted"
+    $libroId = (int)$_GET['delete'];
+
+    $stmt = $conn->prepare("DELETE FROM libro WHERE libro_id = ? AND usuario_id = ?");
+    $stmt->bind_param("ii", $libroId, $userId);
+
+    if ($stmt->execute()) {
         header("Location: dashboard.php?status=deleted");
         exit;
     } else {
@@ -27,6 +25,15 @@ if (isset($_GET['delete'])) {
     }
 }
 
+// Consultar libros del usuario
+$stmt = $conn->prepare("SELECT libro_id, titulo, sinopsis, autor, portada 
+                        FROM libro 
+                        WHERE usuario_id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$libros = $result->fetch_all(MYSQLI_ASSOC);
+
 $title = "Mi Dashboard";
 
 ob_start(); ?>
@@ -34,10 +41,10 @@ ob_start(); ?>
     <h1>Bienvenido, <?php echo htmlspecialchars($user); ?></h1>
 
     <div class="acciones">
-        <a href="add-book.php" class="btn-add">
+        <a href="add-book.php" class="btn btn--primary">
             <i class="fa-solid fa-plus"></i> Añadir nuevo libro
         </a>
-        <a href="logout.php" class="btn-secondary">Cerrar sesión</a>
+        <a href="logout.php" class="btn btn--secondary">Cerrar sesión</a>
     </div>
 
     <!-- Mensajes según parámetro status -->
@@ -57,17 +64,22 @@ ob_start(); ?>
 
     <h2>Mis Libros</h2>
     <div class="libros-grid">
-        <?php if (!empty($_SESSION['libros'][$user])): ?>
-            <?php foreach ($_SESSION['libros'][$user] as $index => $libro): ?>
+        <?php if (!empty($libros)): ?>
+            <?php foreach ($libros as $libro): ?>
                 <div class="libro-card">
-                    <img src="<?php echo htmlspecialchars($libro['imagen']); ?>" alt="<?php echo htmlspecialchars($libro['titulo']); ?>">
+                    <?php if (!empty($libro['portada'])): ?>
+                        <img src="<?php echo htmlspecialchars($libro['portada']); ?>" alt="<?php echo htmlspecialchars($libro['titulo']); ?>">
+                    <?php endif; ?>
                     <h3><?php echo htmlspecialchars($libro['titulo']); ?></h3>
+                    <?php if (!empty($libro['autor'])): ?>
+                        <p><strong>Autor:</strong> <?php echo htmlspecialchars($libro['autor']); ?></p>
+                    <?php endif; ?>
                     <p><?php echo htmlspecialchars($libro['sinopsis']); ?></p>
-                    <div class="acciones-libro">   
-                        <a href="edit-book.php?id=<?php echo $index; ?>" class="acciones-button edit-icon">
+                    <div class="acciones">
+                        <a href="edit-book.php?id=<?php echo $libro['libro_id']; ?>" class="btn btn--primary">
                             <i class="fa-solid fa-pen"></i> Editar
                         </a>
-                        <a href="dashboard.php?delete=<?php echo $index; ?>" class="acciones-button delete-icon">
+                        <a href="dashboard.php?delete=<?php echo $libro['libro_id']; ?>" class="btn btn--danger" onclick="return confirm('¿Seguro que deseas borrar este libro?');">
                             <i class="fa-solid fa-xmark"></i> Borrar
                         </a>
                     </div>
